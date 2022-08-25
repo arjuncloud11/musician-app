@@ -1,26 +1,23 @@
-name: Build
 on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request. 
   push:
     branches:
-      - master # or the name of your main branch
+      - master
+  pull_request:
+      types: [opened, synchronize, reopened]
+
+name: Main Workflow
 jobs:
-  build:
-    name: Build
+  sonarqube:
     runs-on: self-hosted
     steps:
-      - name: SonarQube Scan
-        uses: arjuncloud11/sonarqube-scan-action@master
-        with:
-           projectBaseDir: app/src
-           args: >
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.tests=tests/
-            -Dsonar.verbose=true
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: arjuncloud/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
