@@ -12,6 +12,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: arjuncloud11/sonarqube-scan-action@master
+      - run: npm sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
