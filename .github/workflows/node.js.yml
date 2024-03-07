@@ -1,6 +1,10 @@
 name: static web app deploy (dev)
 on:
  workflow_dispatch:
+  inputs:
+      commit_sha:
+        description: 'SHA of the successful commit'
+        required: true
  push:
   branches: master
 permissions:
@@ -37,4 +41,4 @@ jobs:
                -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
                -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/arjuncloud11/musician-app/actions/workflows/node.js.yml/dispatches \
-            -d '{"ref":"master"}'
+            -d '{"ref":"master","inputs":{"commit_sha": "${{ github.event.inputs.commit_sha }}"}}'
