@@ -44,6 +44,6 @@ jobs:
              --data '{
                "ref": "master",
                "inputs": {
-                 "commit_sha": "${{ LAST_SUCCESSFUL_SHA }}"
+                 "commit_sha": "${{ SHA }}"
                }
              }'
