@@ -14,19 +14,27 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
 
-    - name: npm install and build
-      id: build
+    - name: Retrieve Last Successful Commit
+      if: steps.check_status.outputs.failed_commit == 'true'
+      id: retrieve_commit
       run: |
-          nm install
-    - name: Install of npm
-      if: failure ()
-      uses: bahmutov/npm-install@v1.4.5
-    - name: Install of dpednecies
-      if: failure ()
-      uses: nrwl/last-successful-commit-action@v1
-      id: last_successful_commit
-      with:
-         branch: master
-         workflow_id: node.js.yml
-         github_token: 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
-         run: npm run nx affected -- --target=build --base=${{ steps.last_successful_commit.outputs.commit_hash }} --parallel --configuration=production
+          last_successful_commit=$(git log --format="%H" -n 1) # Retrieve the last successful commit hash
+          echo "::set-output name=last_successful_commit::$last_successful_commit"
+            
+
+    # - name: npm install and build
+    #   id: build
+    #   run: |
+    #       nm install
+    # - name: Install of npm
+    #   if: failure ()
+    #   uses: bahmutov/npm-install@v1.4.5
+    # - name: Install of dpednecies
+    #   if: failure ()
+    #   uses: nrwl/last-successful-commit-action@v1
+    #   id: last_successful_commit
+    #   with:
+    #      branch: master
+    #      workflow_id: node.js.yml
+    #      github_token: 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
+    #      run: npm run nx affected -- --target=build --base=${{ steps.last_successful_commit.outputs.commit_hash }} --parallel --configuration=production
