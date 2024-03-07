@@ -21,7 +21,7 @@ jobs:
       - name: npm install and build
         id: build
         run: |
-          npm install
+          nm install
 
       - name: Get last successful commit SHA
         id: last_successful_commit
