@@ -1,23 +1,22 @@
+name: static web app deploy (dev)
 on:
-  # Trigger analysis when pushing in master or pull requests, and when creating
-  # a pull request
-  push:
-    branches:
-      - master
-  pull_request:
-      types: [opened, synchronize, reopened]
-
-name: Main Workflow
+ workflow_dispatch:
+ push:
+  branches: test-commit
+permissions:
+  contents: read
 jobs:
-  sonarqube:
-    runs-on: self-hosted
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
       with:
-        # Disabling shallow clone is recommended for improving relevancy of 
-        fetch-depth: 0
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}   
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: npm install and build
+      id: build
+      run: |
+          npm install
