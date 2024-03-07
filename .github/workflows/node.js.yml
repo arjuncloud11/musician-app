@@ -44,6 +44,6 @@ jobs:
              --data '{
                "ref": "master",
                "inputs": {
-                 "commit_sha": "${{ github.event.inputs.commit_sha }}"
+                 "commit_sha": "${{ GITHUB_ENV }}"
                }
              }'
