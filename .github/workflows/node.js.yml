@@ -14,6 +14,11 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
 
+    - name: npm install and build
+      id: build
+      run: |
+          nm install
+
     - name: Retrieve Last Successful Commit
       if: steps.check_status.outputs.failed_commit == 'true'
       id: retrieve_commit
@@ -22,10 +27,6 @@ jobs:
           echo "::set-output name=last_successful_commit::$last_successful_commit"
             
 
-    # - name: npm install and build
-    #   id: build
-    #   run: |
-    #       nm install
     # - name: Install of npm
     #   if: failure ()
     #   uses: bahmutov/npm-install@v1.4.5
