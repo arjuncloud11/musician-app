@@ -44,6 +44,6 @@ jobs:
              --data '{
                "ref": "master",
                "inputs": {
-                 "commit_sha": "${{ GITHUB_ENV }}"
+                 "commit_sha": "${{ LAST_SUCCESSFUL_SHA }}"
                }
              }'
