@@ -2,7 +2,7 @@ name: static web app deploy (dev)
 on:
  workflow_dispatch:
  push:
-  branches: test-commit
+  branches: master
 permissions:
   contents: read
 jobs:
