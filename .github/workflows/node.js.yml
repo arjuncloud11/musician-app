@@ -1,44 +1,49 @@
 name: static web app deploy (dev)
 on:
- workflow_dispatch:
-  inputs:
+  workflow_dispatch:
+    inputs:
       commit_sha:
         description: 'SHA of the successful commit'
         required: true
- push:
-  branches: master
+  push:
+    branches: master
 permissions:
   contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
 
-    - name: npm install and build
-      id: build
-      run: |
-          nm install
+      - name: npm install and build
+        id: build
+        run: |
+          npm install
 
-    - name: Get last successful commit SHA
-      id: last_successful_commit
-      if: failure()
-      run: |
+      - name: Get last successful commit SHA
+        id: last_successful_commit
+        if: failure()
+        run: |
           LAST_SUCCESSFUL_SHA=$(curl -s -X GET \
             -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=workflow_run&status=success" | jq -r '.workflow_runs[0].head_commit.id')
-            echo "SHA=${LAST_SUCCESSFUL_SHA}" >> $GITHUB_ENV
-    - name: Trigger workflow for previous successful commit
-      if: failure()
-      run: |
-            curl -L \
-               -X POST \
-               -H "Accept: application/vnd.github+json" \
-               -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
-               -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/arjuncloud11/musician-app/actions/workflows/node.js.yml/dispatches \
-            -d '{"ref":"master","inputs":{"commit_sha": "${{ github.event.inputs.commit_sha }}"}}'
+          echo "SHA=${LAST_SUCCESSFUL_SHA}" >> $GITHUB_ENV
+
+      - name: Trigger workflow for previous successful commit
+        if: failure()
+        run: |
+          curl -X POST \
+             -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+             -H "Accept: application/vnd.github.v3+json" \
+             -H "Content-Type: application/json" \
+             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/node.js.yml/dispatches" \
+             --data '{
+               "ref": "master",
+               "inputs": {
+                 "commit_sha": "${{ github.event.inputs.commit_sha }}"
+               }
+             }'
