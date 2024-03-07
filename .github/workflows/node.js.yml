@@ -20,7 +20,7 @@ jobs:
           nm install
 
     - name: Retrieve Last Successful Commit
-      if: steps.check_status.outputs.failed_commit == 'true'
+      if: failure ()
       id: retrieve_commit
       run: |
           last_successful_commit=$(git log --format="%H" -n 1) # Retrieve the last successful commit hash
